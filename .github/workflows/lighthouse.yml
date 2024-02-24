@@ -5,21 +5,36 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  lhci:
+    name: Lighthouse CI
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
       - name: Install dependencies
         run: npm install
+      - name: run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli@0.13.x
+          lhci autorun --config=./lighthouserc-ci.js
+  # build-and-test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Build Angular project
-        run: npx run start
+  #     - name: Install dependencies
+  #       run: npm install
+
+  #     - name: Build Angular project
+  #       run: npx run start
       
-      - name: Audit URLs using Lighthouse
-        uses: treosh/lighthouse-ci-action@v11
-        with:
-          port: 4200
-          # budgetPath: ./budget.json # test performance budgets
-          uploadArtifacts: true # save results as an action artifacts
-          temporaryPublicStorage: true # upload lighthouse report to the temporary storage
+  #     - name: Audit URLs using Lighthouse
+  #       uses: treosh/lighthouse-ci-action@v11
+  #       with:
+  #         port: 4200
+  #         # budgetPath: ./budget.json # test performance budgets
+  #         uploadArtifacts: true # save results as an action artifacts
+  #         temporaryPublicStorage: true # upload lighthouse report to the temporary storage
